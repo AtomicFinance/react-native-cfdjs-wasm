@@ -15,7 +15,7 @@ Pod::Spec.new do |s|
 
   s.source_files = "ios/**/*.{h,m,mm,swift}"
   s.resource_bundles = {
-    'WASM' => ['resources/*']
+    'CFDJS_WASM' => ['resources/*']
   }
 
   s.dependency "React-Core"

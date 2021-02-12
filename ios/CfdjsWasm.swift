@@ -337,7 +337,7 @@ class CfdjsWasm: NSObject, WKScriptMessageHandler {
         userController.add(self, name: "reject")
         
         let frameworkBundle = Bundle(for: CfdjsWasm.self)
-        let bundleURL = frameworkBundle.resourceURL?.appendingPathComponent("WASM.bundle")
+        let bundleURL = frameworkBundle.resourceURL?.appendingPathComponent("CFDJS_WASM.bundle")
         let resourceBundle = Bundle(url: bundleURL!)!
 
         let initFilePath = resourceBundle.url(forResource: "wasm_init", withExtension: "js")
