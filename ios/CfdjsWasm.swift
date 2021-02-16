@@ -4,16 +4,16 @@ import WebKit
 let js: String = """
 var wrappedModule = {};
 
-function callCfd(id, fn, args) {
-  wrappedModule[id][fn](...args)
+function callCfd(modId, callId, fn, args) {
+  wrappedModule[modId][fn](...args)
     .then(function (res) {
       window.webkit.messageHandlers.resolve.postMessage(
-        JSON.stringify({ id: id, data: JSON.stringify(res) })
+        JSON.stringify({ id: callId, data: JSON.stringify(res) })
       );
     })
     .catch(function (e) {
       window.webkit.messageHandlers.reject.postMessage(
-        JSON.stringify({ id: id, data: e.toString() })
+        JSON.stringify({ id: callId, data: e.toString() })
       );
     });
   return true;
@@ -390,11 +390,12 @@ class CfdjsWasm: NSObject, WKScriptMessageHandler {
   
     @objc
     func callCfd(_ modId: NSString, funcName name: NSString, arguments args: NSString, resolver resolve: @escaping RCTPromiseResolveBlock, rejecter reject: @escaping RCTPromiseRejectBlock) -> Void {
-        asyncPool.updateValue(Promise(resolve: resolve, reject: reject), forKey: modId as String)
+        let callId = "\(Date().timeIntervalSince1970)\(Int.random(in: 1..<10000))"
+        asyncPool.updateValue(Promise(resolve: resolve, reject: reject), forKey: callId as String)
         
         DispatchQueue.main.async {
             self.webView.evaluateJavaScript("""
-            callCfd("\(modId)", "\(name)", \(args));
+            callCfd("\(modId)", "\(callId)", "\(name)", \(args));
             """) { (value, error) in
                 if error != nil {
                     self.asyncPool.removeValue(forKey: modId as String)
