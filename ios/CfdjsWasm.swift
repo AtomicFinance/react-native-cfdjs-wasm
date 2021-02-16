@@ -215,11 +215,16 @@ async function callJsonApi(wasmModule, reqName, arg, hasThrowExcept = true) {
       ['string', 'string'],
       [reqName, argStr]
     );
+
+    if (retJson.includes('CfdError')) {
+        throw new Error(retJson)
+    }
+
     retObj = JSON.parse(retJson);
   } catch (err) {
     console.log(err);
     throw new CfdError(
-      'ERROR: Invalid function call:' + ` func=[${reqName}], arg=[${arg}] ${err}`,
+      'ERROR: Invalid function call:' + ` func=[${reqName}], arg=[${JSON.stringify(arg)}] ${err}`,
       undefined,
       err
     );
